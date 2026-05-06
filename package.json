@@ -1,0 +1,18 @@
+{
+  "name": "chronoshop",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-handlebars": "^7.1.3",
+    "mongoose": "^8.4.0",
+    "mongoose-paginate-v2": "^1.8.3",
+    "socket.io": "^4.7.5"
+  }
+}
