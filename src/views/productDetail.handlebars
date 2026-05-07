@@ -1,0 +1,45 @@
+<div class="product-detail">
+  <div class="detail-img">
+    {{#if product.thumbnails.[0]}}
+      <img src="{{product.thumbnails.[0]}}" alt="{{product.title}}">
+    {{else}}
+      <div class="img-placeholder-lg">⌚</div>
+    {{/if}}
+  </div>
+  <div class="detail-info">
+    <span class="category">{{product.category}}</span>
+    <h1>{{product.title}}</h1>
+    <p class="description">{{product.description}}</p>
+    <p class="price-lg">${{product.price}}</p>
+    <p class="stock-info">
+      {{#if product.status}}✓ En stock — {{product.stock}} unidades{{else}}✗ Sin stock{{/if}}
+    </p>
+    <p class="code">Código: {{product.code}}</p>
+
+    {{#if product.status}}
+    <button class="btn-primary" id="add-cart-btn">Agregar al carrito</button>
+    {{/if}}
+    <br>
+    <a href="/products" class="btn-back">← Volver al catálogo</a>
+  </div>
+</div>
+
+<script>
+const productId = '{{product._id}}';
+
+document.getElementById('add-cart-btn')?.addEventListener('click', async () => {
+  let cartId = localStorage.getItem('cartId');
+  if (!cartId) {
+    const res = await fetch('/api/carts', { method: 'POST' });
+    const data = await res.json();
+    cartId = data.payload._id;
+    localStorage.setItem('cartId', cartId);
+  }
+  const res = await fetch(`/api/carts/${cartId}/products/${productId}`, { method: 'POST' });
+  if (res.ok) {
+    window.location.href = `/carts/${cartId}`;
+  } else {
+    alert('Error al agregar al carrito');
+  }
+});
+</script>

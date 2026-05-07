@@ -1,0 +1,34 @@
+<div class="cart-page">
+  <h1>Mi Carrito</h1>
+
+  {{#if cart.products.length}}
+  <div class="cart-items">
+    {{#each cart.products}}
+    <div class="cart-item">
+      <div class="cart-item-img">
+        {{#if product.thumbnails.[0]}}
+          <img src="{{product.thumbnails.[0]}}" alt="{{product.title}}">
+        {{else}}
+          <div class="img-placeholder-sm">⌚</div>
+        {{/if}}
+      </div>
+      <div class="cart-item-info">
+        <h3>{{product.title}}</h3>
+        <span class="category">{{product.category}}</span>
+        <p class="price">${{product.price}} × {{quantity}}</p>
+        <p class="subtotal">Subtotal: ${{multiply product.price quantity}}</p>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  <div class="cart-total">
+    <h2>Total: ${{total}}</h2>
+    <a href="/products" class="btn-primary">Seguir comprando</a>
+  </div>
+  {{else}}
+  <div class="empty-cart">
+    <p>Tu carrito está vacío</p>
+    <a href="/products" class="btn-primary">Ver catálogo</a>
+  </div>
+  {{/if}}
+</div>

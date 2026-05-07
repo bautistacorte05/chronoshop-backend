@@ -1,0 +1,70 @@
+<div class="page-header">
+  <h1>Catálogo de Relojes</h1>
+  <div class="filters">
+    <a href="/products" class="btn-filter {{#unless query}}active{{/unless}}">Todos</a>
+    <a href="/products?query=Sport"  class="btn-filter {{#if (eq query 'Sport')}}active{{/if}}">Sport</a>
+    <a href="/products?query=Dress"  class="btn-filter {{#if (eq query 'Dress')}}active{{/if}}">Dress</a>
+    <a href="/products?query=Casual" class="btn-filter {{#if (eq query 'Casual')}}active{{/if}}">Casual</a>
+    <a href="/products?query=Smart"  class="btn-filter {{#if (eq query 'Smart')}}active{{/if}}">Smart</a>
+    <a href="/products?sort=asc"  class="btn-filter {{#if (eq sort 'asc')}}active{{/if}}">Precio ↑</a>
+    <a href="/products?sort=desc" class="btn-filter {{#if (eq sort 'desc')}}active{{/if}}">Precio ↓</a>
+  </div>
+</div>
+
+<div class="products-grid" id="products-grid">
+  {{#each payload}}
+  <div class="product-card" id="product-{{_id}}">
+    <a href="/products/{{_id}}">
+      <div class="product-img">
+        {{#if thumbnails.[0]}}
+          <img src="{{thumbnails.[0]}}" alt="{{title}}">
+        {{else}}
+          <div class="img-placeholder">⌚</div>
+        {{/if}}
+      </div>
+      <div class="product-info">
+        <h3>{{title}}</h3>
+        <span class="category">{{category}}</span>
+        <p class="price">${{price}}</p>
+        <span class="stock {{#unless status}}out{{/unless}}">
+          {{#if status}}En stock ({{stock}}){{else}}Sin stock{{/if}}
+        </span>
+      </div>
+    </a>
+  </div>
+  {{/each}}
+</div>
+
+<div class="pagination">
+  {{#if hasPrevPage}}<a href="{{prevLink}}" class="btn-page">← Anterior</a>{{/if}}
+  <span>Página {{page}} de {{totalPages}}</span>
+  {{#if hasNextPage}}<a href="{{nextLink}}" class="btn-page">Siguiente →</a>{{/if}}
+</div>
+
+<script>
+const socket = io();
+socket.on('newProduct', (product) => {
+  const grid = document.getElementById('products-grid');
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  card.id = `product-${product._id}`;
+  card.innerHTML = `
+    <a href="/products/${product._id}">
+      <div class="product-img">
+        ${product.thumbnails[0]
+          ? `<img src="${product.thumbnails[0]}" alt="${product.title}">`
+          : '<div class="img-placeholder">⌚</div>'}
+      </div>
+      <div class="product-info">
+        <h3>${product.title}</h3>
+        <span class="category">${product.category}</span>
+        <p class="price">$${product.price}</p>
+        <span class="stock">En stock (${product.stock})</span>
+      </div>
+    </a>`;
+  grid.appendChild(card);
+});
+socket.on('deleteProduct', (id) => {
+  document.getElementById(`product-${id}`)?.remove();
+});
+</script>
