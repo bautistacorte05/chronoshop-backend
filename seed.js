@@ -11,7 +11,7 @@ const products = [
     status: true,
     stock: 20,
     category: 'Sport',
-    thumbnails: ['https://picsum.photos/seed/ga2100/400/400'],
+    thumbnails: ['/images/casio-ga2100.jpg'],
   },
   {
     title: 'Casio Edifice EFR-552',
@@ -21,7 +21,7 @@ const products = [
     status: true,
     stock: 15,
     category: 'Dress',
-    thumbnails: ['https://picsum.photos/seed/efr552/400/400'],
+    thumbnails: ['/images/casio-efr552.jpg'],
   },
   {
     title: 'Casio Vintage A168W',
@@ -31,7 +31,7 @@ const products = [
     status: true,
     stock: 25,
     category: 'Casual',
-    thumbnails: ['https://picsum.photos/seed/a168w/400/400'],
+    thumbnails: ['/images/casio-a168w.jpg'],
   },
   {
     title: 'Seiko 5 Sports SNKE49',
@@ -41,7 +41,7 @@ const products = [
     status: true,
     stock: 12,
     category: 'Sport',
-    thumbnails: ['https://picsum.photos/seed/snke49/400/400'],
+    thumbnails: ['/images/seiko-snke49.jpg'],
   },
   {
     title: 'Seiko Presage SRPE41',
@@ -51,7 +51,7 @@ const products = [
     status: true,
     stock: 8,
     category: 'Dress',
-    thumbnails: ['https://picsum.photos/seed/srpe41/400/400'],
+    thumbnails: ['/images/seiko-srpe41.jpg'],
   },
   {
     title: 'Seiko Prospex SPB051',
@@ -61,7 +61,7 @@ const products = [
     status: true,
     stock: 5,
     category: 'Sport',
-    thumbnails: ['https://picsum.photos/seed/spb051/400/400'],
+    thumbnails: ['/images/seiko-spb051.jpg'],
   },
   {
     title: 'Fossil Machine FS5343',
@@ -71,7 +71,7 @@ const products = [
     status: true,
     stock: 18,
     category: 'Casual',
-    thumbnails: ['https://picsum.photos/seed/fs5343/400/400'],
+    thumbnails: ['/images/fossil-fs5343.jpg'],
   },
   {
     title: 'Fossil Gen 6 FTW4059',
@@ -81,7 +81,7 @@ const products = [
     status: true,
     stock: 10,
     category: 'Smart',
-    thumbnails: ['https://picsum.photos/seed/ftw4059/400/400'],
+    thumbnails: ['/images/fossil-ftw4059.jpg'],
   },
   {
     title: 'Tissot T-Classic T063',
@@ -91,7 +91,7 @@ const products = [
     status: true,
     stock: 7,
     category: 'Dress',
-    thumbnails: ['https://picsum.photos/seed/tissott063/400/400'],
+    thumbnails: ['/images/tissot-t063.jpg'],
   },
   {
     title: 'Tissot PRX Automatic',
@@ -101,7 +101,7 @@ const products = [
     status: true,
     stock: 6,
     category: 'Dress',
-    thumbnails: ['https://picsum.photos/seed/tissotprx/400/400'],
+    thumbnails: ['/images/tissot-prx.jpg'],
   },
 ];
 
