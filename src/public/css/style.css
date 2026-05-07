@@ -105,6 +105,18 @@ body {
 }
 .btn-primary:hover { background: #1d4ed8; }
 .btn-back { display: inline-block; color: #2563eb; text-decoration: none; font-size: 14px; margin-top: 8px; }
+.btn-secondary {
+  display: inline-block; padding: 12px 24px; background: #fff;
+  color: #2563eb; border: 2px solid #2563eb; border-radius: 8px; font-size: 15px;
+  cursor: pointer; text-decoration: none; transition: all 0.15s;
+}
+.btn-secondary:hover { background: #eff6ff; }
+.nav-cart-link {
+  margin-left: auto; padding: 6px 16px; background: #2563eb; color: #fff;
+  border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600;
+  transition: background 0.15s;
+}
+.nav-cart-link:hover { background: #1d4ed8; }
 
 /* Cart */
 .cart-page h1 { font-size: 28px; font-weight: 700; margin-bottom: 24px; }

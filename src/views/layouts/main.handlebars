@@ -10,7 +10,16 @@
   <nav class="navbar">
     <a href="/products" class="brand">ChronoShop</a>
     <span class="tagline">Relojes de calidad al mejor precio</span>
+    <a href="#" id="nav-cart" class="nav-cart-link" style="display:none">🛒 Mi carrito</a>
   </nav>
+  <script>
+    const cartId = localStorage.getItem('cartId');
+    if (cartId) {
+      const link = document.getElementById('nav-cart');
+      link.href = '/carts/' + cartId;
+      link.style.display = 'inline-block';
+    }
+  </script>
   <main class="container">
     {{{body}}}
   </main>
