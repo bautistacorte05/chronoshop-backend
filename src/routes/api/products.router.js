@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import { authJWT }   from '../../middlewares/authJWT.js'
+import { authAdmin } from '../../middlewares/authRole.js'
 
 export const createProductsRouter = (productManager, io) => {
   const router = Router();
@@ -40,7 +42,7 @@ export const createProductsRouter = (productManager, io) => {
     }
   });
 
-  router.post('/', async (req, res) => {
+  router.post('/', authJWT, authAdmin, async (req, res) => {
     try {
       const product = await productManager.create(req.body);
       io.emit('newProduct', product);
@@ -50,7 +52,7 @@ export const createProductsRouter = (productManager, io) => {
     }
   });
 
-  router.put('/:pid', async (req, res) => {
+  router.put('/:pid', authJWT, authAdmin, async (req, res) => {
     try {
       const product = await productManager.update(req.params.pid, req.body);
       res.json({ status: 'success', payload: product });
@@ -59,7 +61,7 @@ export const createProductsRouter = (productManager, io) => {
     }
   });
 
-  router.delete('/:pid', async (req, res) => {
+  router.delete('/:pid', authJWT, authAdmin, async (req, res) => {
     try {
       const product = await productManager.delete(req.params.pid);
       io.emit('deleteProduct', req.params.pid);
