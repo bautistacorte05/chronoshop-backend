@@ -63,7 +63,7 @@ export const makeAuthController = (userManager) => ({
     if (!req.user) return res.status(401).json({ error: 'Sin sesión activa' })
     res.json({
       sessionId: req.sessionID,
-      user: { id: req.user._id, email: req.user.email, role: req.user.role }
+      user: { _id: req.user._id, email: req.user.email, role: req.user.role }
     })
   },
 
