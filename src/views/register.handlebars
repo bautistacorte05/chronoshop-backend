@@ -1,0 +1,36 @@
+<div class="auth-container">
+  <h2>Crear Cuenta</h2>
+  <p id="error-msg" class="error-msg"></p>
+
+  <form id="registerForm">
+    <label>Nombre</label>
+    <input type="text" name="firstName" placeholder="Nombre">
+    <label>Apellido</label>
+    <input type="text" name="lastName" placeholder="Apellido">
+    <label>Email</label>
+    <input type="email" name="email" required placeholder="tu@email.com">
+    <label>Contraseña</label>
+    <input type="password" name="password" required placeholder="Mínimo 6 caracteres">
+    <button type="submit">Registrarse</button>
+  </form>
+
+  <p>¿Ya tenés cuenta? <a href="/login">Iniciá sesión</a></p>
+</div>
+
+<script>
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const data = Object.fromEntries(new FormData(e.target))
+    const res = await fetch('/api/v1/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    if (res.ok) {
+      window.location.href = '/login'
+    } else {
+      const { error } = await res.json()
+      document.getElementById('error-msg').textContent = error
+    }
+  })
+</script>
