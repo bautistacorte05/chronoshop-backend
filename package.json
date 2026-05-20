@@ -2,6 +2,7 @@
   "name": "chronoshop",
   "version": "1.0.0",
   "type": "module",
+  "engines": { "node": ">=20.8.0" },
   "scripts": {
     "start": "node app.js",
     "dev": "node --watch app.js",
