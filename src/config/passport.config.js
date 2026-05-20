@@ -16,6 +16,12 @@ export const configurePassport = (userManager) => {
   })
 
   passport.use(makeLocalStrategy(userManager))
-  passport.use(makeGithubStrategy(userManager))
-  passport.use(makeGoogleStrategy(userManager))
+
+  if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+    passport.use(makeGithubStrategy(userManager))
+  }
+
+  if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+    passport.use(makeGoogleStrategy(userManager))
+  }
 }
