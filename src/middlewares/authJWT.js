@@ -2,7 +2,10 @@
 import jwt from 'jsonwebtoken'
 
 export const authJWT = (req, res, next) => {
-  const token = req.cookies?.authToken || req.headers.authorization?.split(' ')[1]
+  const bearerToken = req.headers.authorization?.startsWith('Bearer ')
+    ? req.headers.authorization.split(' ')[1]
+    : undefined
+  const token = req.cookies?.authToken || bearerToken
   if (!token) return res.status(401).json({ error: 'No autenticado' })
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET)

@@ -20,6 +20,8 @@ export const makeAuthController = (userManager) => ({
   register: async (req, res) => {
     try {
       const { firstName, lastName, email, password } = req.body
+      if (!email || !password) return res.status(400).json({ error: 'Email y contraseña son requeridos' })
+      if (password.length < 6) return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' })
       const user = await userManager.register({ firstName, lastName, email, password })
       res.status(201).json({
         message: 'Usuario registrado correctamente',
