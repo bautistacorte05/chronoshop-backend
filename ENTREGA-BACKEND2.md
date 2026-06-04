@@ -746,186 +746,413 @@ La condición `secure: process.env.NODE_ENV === 'production'` en ambas cookies m
 
 ## 5. Evidencia Real de Funcionamiento
 
-Todos los ejemplos siguientes son salidas reales del servidor corriendo en `http://localhost:8080`.
+Todas las capturas siguientes son peticiones reales contra el servidor corriendo en `http://localhost:8080` con MongoDB local, capturadas el **2026-06-04**. Se muestran los encabezados HTTP completos tal como los retorna el servidor (equivalente a la vista "Headers" de Postman).
 
-### 5.1 Registro exitoso
+---
 
+### 5.1 Registro de usuario — `POST /api/v1/auth/register` → **201 Created**
+
+**Request**
 ```
-POST /api/v1/auth/register
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Carlos",
+  "lastName": "Mendoza",
+  "email": "carlos@chronoshop.com",
+  "password": "segura123"
+}
 ```
+
+**Response — Headers**
+```
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+Content-Length: 134
+Date: Thu, 04 Jun 2026 13:09:29 GMT
+```
+
+**Response — Body**
 ```json
 {
     "message": "Usuario registrado correctamente",
     "user": {
-        "_id": "6a0db79c6cfd596feab7b13d",
-        "email": "maria@chronoshop.com",
+        "_id": "6a2179098c01d00ef336e93c",
+        "email": "carlos@chronoshop.com",
         "role": "user"
     }
 }
 ```
 
-### 5.2 Intento de registro duplicado (409)
+---
 
+### 5.2 Registro duplicado — `POST /api/v1/auth/register` → **409 Conflict**
+
+**Request**
 ```
-POST /api/v1/auth/register  (mismo email)
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "email": "carlos@chronoshop.com",
+  "password": "segura123"
+}
 ```
+
+**Response — Headers**
+```
+HTTP/1.1 409 Conflict
+Content-Type: application/json; charset=utf-8
+Content-Length: 40
+Date: Thu, 04 Jun 2026 13:09:32 GMT
+```
+
+**Response — Body**
 ```json
 {
     "error": "El email ya está registrado"
 }
 ```
 
-### 5.3 Login local exitoso
+---
 
+### 5.3 Login local (usuario) — `POST /api/v1/auth/login` → **200 OK**
+
+**Request**
 ```
-POST /api/v1/auth/login
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "carlos@chronoshop.com",
+  "password": "segura123"
+}
 ```
+
+**Response — Headers**
+```
+HTTP/1.1 200 OK
+Set-Cookie: authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTIxNzkwOThjMDFkMDBlZjMzNmU5M2MiLCJyb2xlIjoidXNlciIsImlhdCI6MTc4MDU3ODU4OCwiZXhwIjoxNzgwNTgyMTg4fQ.7Pr6TjwSdbkwqYbuonu3YYl6LebFXf9qMv66fe4zmJE; Max-Age=3600; Path=/; Expires=Thu, 04 Jun 2026 14:09:48 GMT; HttpOnly; SameSite=Lax
+Set-Cookie: connect.sid=s%3Ah_m0VqysxOT-D4nkZIlbOVugcUhMEno_.dZ2EBPnvj0UaG9QlGcmS4FJ90sDeZ96LkDcO17FWmSg; Path=/; Expires=Thu, 04 Jun 2026 14:09:48 GMT; HttpOnly; SameSite=Lax
+Content-Type: application/json; charset=utf-8
+Date: Thu, 04 Jun 2026 13:09:48 GMT
+```
+
+> Las dos cookies se setean en el mismo response: `authToken` (JWT) y `connect.sid` (sesión). Ambas con `HttpOnly` y `SameSite=Lax`.
+
+**Response — Body**
 ```json
 {
     "message": "Login exitoso",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTBkYjc5YzZjZmQ1OTZmZWFiN2IxM2QiLCJyb2xlIjoidXNlciIsImlhdCI6MTc3OTI4Mzg3NiwiZXhwIjoxNzc5Mjg3NDc2fQ.VaaQLMlN2H7LVLif8pXvofE4MGV25OIRXXwNAl2oL7Q",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTIxNzkwOThjMDFkMDBlZjMzNmU5M2MiLCJyb2xlIjoidXNlciIsImlhdCI6MTc4MDU3ODU4OCwiZXhwIjoxNzgwNTgyMTg4fQ.7Pr6TjwSdbkwqYbuonu3YYl6LebFXf9qMv66fe4zmJE",
     "user": {
-        "_id": "6a0db79c6cfd596feab7b13d",
-        "email": "maria@chronoshop.com",
+        "_id": "6a2179098c01d00ef336e93c",
+        "email": "carlos@chronoshop.com",
         "role": "user"
     }
 }
 ```
 
-### 5.4 Token JWT real — payload decodificado
-
-El token anterior tiene el payload (sección central, decodificada de base64):
+**JWT — Payload decodificado** (sección central en base64url):
 ```json
 {
-    "userId": "6a0db79c6cfd596feab7b13d",
+    "userId": "6a2179098c01d00ef336e93c",
     "role": "user",
-    "iat": 1779283876,
-    "exp": 1779287476
+    "iat": 1780578588,
+    "exp": 1780582188
 }
 ```
-- `iat`: issued at (timestamp Unix de emisión)
-- `exp`: expiration (1 hora después de `iat`)
+- `iat` → 2026-06-04 13:09:48 UTC (momento de emisión)
+- `exp` → 2026-06-04 14:09:48 UTC (exactamente 1 hora después)
 
-### 5.5 Cookie authToken configurada
+---
 
-```
-Set-Cookie: authToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600
-```
-- `HttpOnly`: JavaScript no puede acceder con `document.cookie`
-- `SameSite=Lax`: protección CSRF
-- `Max-Age=3600`: expira en 1 hora (igual que el JWT)
+### 5.4 Login local (admin) — `POST /api/v1/auth/login` → **200 OK**
 
-### 5.6 GET /api/v1/session — sesión activa
+**Request**
+```
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
 
+{
+  "email": "admin@chronoshop.com",
+  "password": "admin123"
+}
 ```
-GET /api/v1/session  (con cookie connect.sid válida)
+
+**Response — Headers**
 ```
+HTTP/1.1 200 OK
+Set-Cookie: authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTBkYjc5ZDZjZmQ1OTZmZWFiN2IxNDEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3ODA1Nzg3NzYsImV4cCI6MTc4MDU4MjM3Nn0.yqS2vc-G2-ePpXM08tfB7C7zLuFJBdvTKiyNRbhLZ1E; Max-Age=3600; Path=/; Expires=Thu, 04 Jun 2026 14:12:56 GMT; HttpOnly; SameSite=Lax
+Set-Cookie: connect.sid=s%3ANtgUCnDMbD8NdK5wFvDheXP26PDTM7az.6hXXA6R8OVQM1EU3BC9SD6cMZrXCZ%2BC%2BZKR9mbPqjA0; Path=/; Expires=Thu, 04 Jun 2026 14:12:56 GMT; HttpOnly; SameSite=Lax
+Content-Type: application/json; charset=utf-8
+Date: Thu, 04 Jun 2026 13:12:56 GMT
+```
+
+**Response — Body**
 ```json
 {
-    "sessionId": "FiVdATBszatnEkVV7Q1-XFNeouGSE8Je",
+    "message": "Login exitoso",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTBkYjc5ZDZjZmQ1OTZmZWFiN2IxNDEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3ODA1Nzg3NzYsImV4cCI6MTc4MDU4MjM3Nn0.yqS2vc-G2-ePpXM08tfB7C7zLuFJBdvTKiyNRbhLZ1E",
     "user": {
-        "_id": "6a0db79c6cfd596feab7b13d",
-        "email": "maria@chronoshop.com",
-        "role": "user"
+        "_id": "6a0db79d6cfd596feab7b141",
+        "email": "admin@chronoshop.com",
+        "role": "admin"
     }
 }
 ```
 
-### 5.7 GET /api/v1/profile — ruta protegida por JWT
+**JWT Admin — Payload decodificado:**
+```json
+{
+    "userId": "6a0db79d6cfd596feab7b141",
+    "role": "admin",
+    "iat": 1780578776,
+    "exp": 1780582376
+}
+```
 
+---
+
+### 5.5 Ruta protegida — `GET /api/v1/profile` → **200 OK** (con Bearer token)
+
+**Request**
 ```
-GET /api/v1/profile
-Authorization: Bearer eyJhbGci...
+GET http://localhost:8080/api/v1/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTIxNzkwOThjMDFkMDBlZjMzNmU5M2MiLCJyb2xlIjoidXNlciIsImlhdCI6MTc4MDU3ODU4OCwiZXhwIjoxNzgwNTgyMTg4fQ.7Pr6TjwSdbkwqYbuonu3YYl6LebFXf9qMv66fe4zmJE
 ```
+
+**Response — Headers**
+```
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 131
+Date: Thu, 04 Jun 2026 13:09:56 GMT
+```
+
+**Response — Body**
 ```json
 {
     "user": {
-        "_id": "6a0db79c6cfd596feab7b13d",
-        "email": "maria@chronoshop.com",
+        "_id": "6a2179098c01d00ef336e93c",
+        "email": "carlos@chronoshop.com",
         "role": "user",
-        "firstName": "María",
-        "lastName": "García"
+        "firstName": "Carlos",
+        "lastName": "Mendoza"
     }
 }
 ```
 
-### 5.8 GET /api/v1/profile sin token — 401
+---
 
+### 5.6 Ruta protegida sin token — `GET /api/v1/profile` → **401 Unauthorized**
+
+**Request**
 ```
-GET /api/v1/profile  (sin header ni cookie)
+GET http://localhost:8080/api/v1/profile
+(sin Authorization header ni cookie authToken)
 ```
+
+**Response — Headers**
+```
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json; charset=utf-8
+Content-Length: 26
+Date: Thu, 04 Jun 2026 13:09:56 GMT
+```
+
+**Response — Body**
 ```json
 {
     "error": "No autenticado"
 }
 ```
 
-### 5.9 GET /api/v1/admin con rol user — 403
+---
 
+### 5.7 Ruta admin (usuario sin rol) — `GET /api/v1/admin` → **403 Forbidden**
+
+**Request**
 ```
-GET /api/v1/admin
-Authorization: Bearer eyJhbGci...  (token de usuario con role: 'user')
+GET http://localhost:8080/api/v1/admin
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTIxNzkwOThjMDFkMDBlZjMzNmU5M2MiLCJyb2xlIjoidXNlciIsImlhdCI6MTc4MDU3ODU4OCwiZXhwIjoxNzgwNTgyMTg4fQ.7Pr6TjwSdbkwqYbuonu3YYl6LebFXf9qMv66fe4zmJE
 ```
+
+> Token válido, pero `role: "user"` → rechazado por `authAdmin` con 403.
+
+**Response — Headers**
+```
+HTTP/1.1 403 Forbidden
+Content-Type: application/json; charset=utf-8
+Content-Length: 27
+Date: Thu, 04 Jun 2026 13:10:01 GMT
+```
+
+**Response — Body**
 ```json
 {
     "error": "Acceso denegado"
 }
 ```
 
-### 5.10 POST /api/products sin autenticación — 401
+---
 
+### 5.8 Ruta admin (token admin) — `GET /api/v1/admin` → **200 OK**
+
+**Request**
 ```
-POST /api/products  (sin token)
+GET http://localhost:8080/api/v1/admin
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTBkYjc5ZDZjZmQ1OTZmZWFiN2IxNDEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3ODA1Nzg3NzYsImV4cCI6MTc4MDU4MjM3Nn0.yqS2vc-G2-ePpXM08tfB7C7zLuFJBdvTKiyNRbhLZ1E
 ```
+
+**Response — Headers**
+```
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 133
+Date: Thu, 04 Jun 2026 13:13:02 GMT
+```
+
+**Response — Body**
+```json
+{
+    "message": "Panel de administración",
+    "admin": {
+        "userId": "6a0db79d6cfd596feab7b141",
+        "role": "admin",
+        "iat": 1780578776,
+        "exp": 1780582376
+    }
+}
+```
+
+---
+
+### 5.9 Ruta admin sin token — `GET /api/v1/admin` → **401 Unauthorized**
+
+**Request**
+```
+GET http://localhost:8080/api/v1/admin
+(sin Authorization header)
+```
+
+**Response — Headers**
+```
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json; charset=utf-8
+Content-Length: 26
+Date: Thu, 04 Jun 2026 13:13:02 GMT
+```
+
+**Response — Body**
 ```json
 {
     "error": "No autenticado"
 }
 ```
 
-### 5.11 GET /api/products — ruta pública (sin auth)
+---
 
+### 5.10 Sesión activa — `GET /api/v1/session` → **200 OK**
+
+**Request**
 ```
-GET /api/products?limit=2
+GET http://localhost:8080/api/v1/session
+Cookie: connect.sid=s%3Ah_m0VqysxOT-D4nkZIlbOVugcUhMEno_.dZ2EBPnvj0UaG9QlGcmS4FJ90sDeZ96LkDcO17FWmSg
 ```
+
+**Response — Headers**
+```
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 136
+Date: Thu, 04 Jun 2026 13:10:01 GMT
+```
+
+**Response — Body**
 ```json
 {
-    "status": "success",
-    "payload": [
-        {
-            "_id": "69fc8182551ed564e3d96d19",
-            "title": "Casio G-Shock GA-2100",
-            "description": "Reloj deportivo ultrarresistente con caja octogonal...",
-            "price": 99,
-            "category": "Sport"
-        }
-    ],
-    "totalPages": 5,
-    "page": 1
+    "sessionId": "wL8FoIP8OUj-cEFnVUBuRNqdcjs0brI3",
+    "user": {
+        "_id": "6a2179098c01d00ef336e93c",
+        "email": "carlos@chronoshop.com",
+        "role": "user"
+    }
 }
 ```
 
-### 5.12 Logout exitoso
+---
 
+### 5.11 Logout — `POST /api/v1/auth/logout` → **200 OK**
+
+**Request**
 ```
-POST /api/v1/auth/logout  (con cookie de sesión)
+POST http://localhost:8080/api/v1/auth/logout
+Cookie: connect.sid=s%3Ah_m0VqysxOT-D4nkZIlbOVugcUhMEno_...
 ```
+
+**Response — Headers**
+```
+HTTP/1.1 200 OK
+Set-Cookie: authToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+Set-Cookie: connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+Content-Type: application/json; charset=utf-8
+Date: Thu, 04 Jun 2026 13:10:05 GMT
+```
+
+> El servidor retorna las dos cookies con `Expires=Thu, 01 Jan 1970` (epoch 0), instruyendo al browser a eliminarlas inmediatamente.
+
+**Response — Body**
 ```json
 {
     "message": "Logout exitoso"
 }
 ```
 
-### 5.13 Session después del logout — 401
+---
 
+### 5.12 Sesión después del logout — `GET /api/v1/session` → **401 Unauthorized**
+
+**Request**
 ```
-GET /api/v1/session  (con cookie connect.sid ya destruida)
+GET http://localhost:8080/api/v1/session
+Cookie: connect.sid=s%3Ah_m0VqysxOT-D4nkZIlbOVugcUhMEno_...  (sesión destruida)
 ```
+
+**Response — Headers**
+```
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json; charset=utf-8
+Content-Length: 30
+Date: Thu, 04 Jun 2026 13:10:05 GMT
+```
+
+**Response — Body**
 ```json
 {
     "error": "Sin sesión activa"
 }
 ```
+
+---
+
+### 5.13 Resumen de casos probados
+
+| # | Método | Endpoint | Credencial enviada | Status | Resultado |
+|---|--------|----------|-------------------|--------|-----------|
+| 1 | POST | `/api/v1/auth/register` | — | **201** | Usuario creado |
+| 2 | POST | `/api/v1/auth/register` | — (email duplicado) | **409** | Error validado |
+| 3 | POST | `/api/v1/auth/login` | email + password (user) | **200** | Token + 2 cookies |
+| 4 | POST | `/api/v1/auth/login` | email + password (admin) | **200** | Token con role:admin |
+| 5 | GET | `/api/v1/profile` | Bearer token válido | **200** | Perfil completo |
+| 6 | GET | `/api/v1/profile` | Sin token | **401** | No autenticado |
+| 7 | GET | `/api/v1/admin` | Bearer token role:user | **403** | Acceso denegado |
+| 8 | GET | `/api/v1/admin` | Bearer token role:admin | **200** | Panel admin |
+| 9 | GET | `/api/v1/admin` | Sin token | **401** | No autenticado |
+| 10 | GET | `/api/v1/session` | Cookie connect.sid válida | **200** | Sesión activa |
+| 11 | POST | `/api/v1/auth/logout` | Cookie de sesión | **200** | Cookies eliminadas |
+| 12 | GET | `/api/v1/session` | Cookie ya destruida | **401** | Sin sesión activa |
 
 ### 5.14 Suite de tests — 14/14 pasando
 
